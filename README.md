@@ -50,7 +50,7 @@ This project solves that challenge by:
 ## 🏗️ Design Phase  
 
 ### System Design  
-![System Design](C:\Nayomi Doc\Greenwich Classes\MSC Project/flow dig.jpeg)  
+![System Design](images/flow dig.jpeg)  
 
 - Suricata monitors traffic & generates alerts.  
 - Filebeat & Winlogbeat forward logs to Elasticsearch.  
