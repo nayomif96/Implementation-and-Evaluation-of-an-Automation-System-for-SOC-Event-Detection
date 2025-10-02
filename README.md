@@ -50,7 +50,7 @@ This project solves that challenge by:
 ## 🏗️ Design Phase  
 
 ### System Design  
-![System Design](images/flow dig.jpeg)  
+![System Design](https://github.com/nayomif96/Implementation-and-Evaluation-of-an-Automation-System-for-SOC-Event-Detection/tree/ae81fabe3f1850d0b61495d907a292497e63ed90/images) 
 
 - Suricata monitors traffic & generates alerts.  
 - Filebeat & Winlogbeat forward logs to Elasticsearch.  
