@@ -50,7 +50,7 @@ This project solves that challenge by:
 ## 🏗️ Design Phase  
 
 ### System Design  
-![System Design](https://github.com/nayomif96/Implementation-and-Evaluation-of-an-Automation-System-for-SOC-Event-Detection/tree/ae81fabe3f1850d0b61495d907a292497e63ed90/images) 
+![System Design](https://github.com/nayomif96/Implementation-and-Evaluation-of-an-Automation-System-for-SOC-Event-Detection/blob/main/images/flow%20dig.jpeg)
 
 - Suricata monitors traffic & generates alerts.  
 - Filebeat & Winlogbeat forward logs to Elasticsearch.  
@@ -60,7 +60,7 @@ This project solves that challenge by:
 - Streamlit dashboard provides analyst feedback & mitigation actions.  
 
 ### Network Topology  
-![Network Topology](images/network_topology.png)  
+![Network Topology](https://github.com/nayomif96/Implementation-and-Evaluation-of-an-Automation-System-for-SOC-Event-Detection/blob/main/images/net_dig.png)  
 
 - **Internal VLAN:** Windows VM, Ubuntu Server, SIEM VM, MISP VM.  
 - **External VLAN:** Kali Linux attacker VM.  
