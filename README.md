@@ -49,17 +49,8 @@ This project solves that challenge by:
 
 ## 🏗️ Design Phase  
 
-### System Design  
-![System Design](https://github.com/nayomif96/Implementation-and-Evaluation-of-an-Automation-System-for-SOC-Event-Detection/blob/main/images/flow%20dig.jpeg)
-
-- Suricata monitors traffic & generates alerts.  
-- Filebeat & Winlogbeat forward logs to Elasticsearch.  
-- MISP enriches events with Indicators of Compromise (IOCs).  
-- MySQL stores correlation and feedback data.  
-- Python correlation engine classifies events.  
-- Streamlit dashboard provides analyst feedback & mitigation actions.  
-
 ### Network Topology  
+
 ![Network Topology](https://github.com/nayomif96/Implementation-and-Evaluation-of-an-Automation-System-for-SOC-Event-Detection/blob/main/images/net_dig.png)  
 
 - **Internal VLAN:** Windows VM, Ubuntu Server, SIEM VM, MISP VM.  
@@ -71,7 +62,8 @@ This project solves that challenge by:
 ## ⚙️ Implementation  
 
 ### Component Integration  
-![Integration](images/integration.png)  
+
+![Integration](https://github.com/nayomif96/Implementation-and-Evaluation-of-an-Automation-System-for-SOC-Event-Detection/blob/main/images/flow%20dig.jpeg)  
 
 1. **Suricata IDS** → inspects traffic, generates alerts.  
 2. **Filebeat/Winlogbeat** → forwards logs to Elasticsearch.  
@@ -79,11 +71,20 @@ This project solves that challenge by:
 4. **Kibana** → visual dashboards for analysts.  
 5. **MISP** → enriches alerts with threat intel (IPs/domains/hashes).  
 6. **Python Scripts** →  
-   - Correlate Suricata, syslog, FTP, auth, and Windows logs.  
-   - Classify alerts (TP/TN/FP/FN).  
+   - Correlate Suricata, syslog, FTP, auth, and Windows logs.
+   - Classify alerts (TP/TN/FP/FN)
+     
+   ![Classify alerts (TP/TN/FP/FN).](https://github.com/nayomif96/Implementation-and-Evaluation-of-an-Automation-System-for-SOC-Event-Detection/blob/main/images/prediction.png)
+
+    Events from multiple sources are collected, and each alert is classified as a True Positive, True Negative, False Positive, or False      Negative. The process considers whether Suricata detected the event, checks for known Indicators of Compromise (IOCs), and incorporates historical analyst feedback from similar events.
+   
+   ![Classifiy](https://github.com/nayomif96/Implementation-and-Evaluation-of-an-Automation-System-for-SOC-Event-Detection/blob/main/images/log_check_criteria.png)
+   ![Classif](https://github.com/nayomif96/Implementation-and-Evaluation-of-an-Automation-System-for-SOC-Event-Detection/blob/main/images/log_check_prdiction.png)
+   Each event is further verified using FTP, authentication, and syslog data to refine its classification. FTP logs are checked for repeated failed logins, logins from unusual locations, or abnormal file transfers. Authentication records are reviewed for excessive failed attempts or unexpected successful logins. Syslog entries are analysed for network events like BLOCK, DROP, and ACCEPT, with attention to sudden spikes from the same IP. These checks help confirm whether an alert is a true incident (True Positive), a false alert (False Positive), a missed detection (False Negative), or normal activity (True Negative).
+   
    - Store results in MySQL.  
    - Provide feedback loop for analyst corrections.  
-7. **Streamlit Dashboard** →  
+8. **Streamlit Dashboard** →  
    - Displays alert details & context.  
    - Allows analyst validation (TP/FP/FN/TN).  
    - Enables mitigation actions (update firewall rules, Suricata rules).  
@@ -92,27 +93,53 @@ This project solves that challenge by:
 
 ## 🧪 Testing Phase  
 
-Testing included simulated **normal traffic** and **attack scenarios**:  
+The system was evaluated against multiple scenarios to simulate real SOC workloads. Tests included **True Positive (malicious traffic detected)**, **False Negative (missed attacks)**, and **False Positive (benign activity flagged as malicious)** cases.  
 
-| Test Case | Input | Expected Result | Actual Result | Status |
-|-----------|-------|-----------------|---------------|--------|
-| TC1 | Nmap Port Scan | Alert → TP | Detected correctly | ✅ |
-| TC2 | Normal HTTP browsing | No alert → TN | Correctly ignored | ✅ |
-| TC3 | Benign misclassified | Alert → FP | Flagged as FP | ✅ |
-| TC4 | Custom payload attack | Alert → TP | Detected correctly | ✅ |
-| TC5 | Low-signature stealth attack | Missed → FN | Recorded FN | ✅ |
+---
+
+### ✅ True Positive Scenarios  
+
+| Activity | Source → Target | Description | Source IP Address |
+|----------|-----------------|-------------|-------------------|
+| SSH brute force | Kali → Ubuntu | Repeated login attempts on SSH to test brute force detection | 192.168.100.228, 192.168.100.150 |
+| FTP brute force | Kali → Ubuntu | Repeated login attempts on FTP to trigger brute force alerts | 192.168.100.248, 192.168.100.138 |
+| Nmap scan | Kali → Ubuntu | TCP SYN scan on ports 21 and 22 to simulate reconnaissance | 192.168.100.128 |
+| Malicious download | Windows → Ubuntu | Access to a known malicious URL to trigger a download-related alert | 192.168.200.12 |
+
+---
+
+### ❌ False Negative Scenarios  
+
+| Activity | Source → Target | Description | Source IP Address |
+|----------|-----------------|-------------|-------------------|
+| Slow SSH brute force | Kali → Ubuntu | Brute force at very low rate (1 attempt/minute) to test evasion | 192.168.100.223, 192.168.100.233 |
+| Encrypted SSH payload | Kali → Ubuntu | Malicious SSH packets with encryption to test detection evasion | 192.168.100.100 |
+
+---
+
+### ⚠️ False Positive Scenarios  
+
+| Activity | Source → Target | Description | Source IP Address |
+|----------|-----------------|-------------|-------------------|
+| Large FTP transfer | Windows → Ubuntu | Upload of a large file (>1KB) to FTP server | 192.168.200.12 |
+| Multiple SSH sessions | Windows → Ubuntu | Multiple concurrent SSH sessions (benign heavy activity) | 192.168.200.12 |
+| Continuous SSH data transfer | Windows → Ubuntu | Large file transfer via SCP | 192.168.200.12 |
+| ICMP flood | Windows → Ubuntu | Continuous ping to simulate stress (non-malicious) | 192.168.200.12 |
+| Multiple SSH login failures | Windows → Ubuntu | Repeated failed login attempts from legitimate testing | 192.168.200.12 |
+| File transfer via SCP | Windows → Ubuntu | Large file transfer from Windows to Ubuntu | 192.168.200.12 |
+| DNS lookup | Windows → Ubuntu | Query for non-existent domain to test alert response | 192.168.200.12 |
+
 
 ---
 
 ## 📊 Results  
 
 ### Prediction Accuracy  
-![Accuracy](images/results_accuracy.png)  
+![Accuracy]([images/results_accuracy.png](https://github.com/nayomif96/Implementation-and-Evaluation-of-an-Automation-System-for-SOC-Event-Detection/blob/main/images/result.png)  
 
 - **Overall Accuracy:** 92%  
 - **Precision:** 90%  
 - **Recall:** 89%  
 - **Improvement:** Noticeable reduction in **false positives** compared to baseline Suricata rules.  
 
-### Analyst Dashboard  
-![Dashboard](images/dashboard.png)
+
