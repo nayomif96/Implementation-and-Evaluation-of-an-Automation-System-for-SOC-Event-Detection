@@ -135,7 +135,7 @@ The system was evaluated against multiple scenarios to simulate real SOC workloa
 ## 📊 Results  
 
 ### Prediction Accuracy  
-![Accuracy]([images/results_accuracy.png](https://github.com/nayomif96/Implementation-and-Evaluation-of-an-Automation-System-for-SOC-Event-Detection/blob/main/images/result.png)  
+![Accuracy](https://github.com/nayomif96/Implementation-and-Evaluation-of-an-Automation-System-for-SOC-Event-Detection/blob/main/images/result.png) 
 
 - **Overall Accuracy:** 92%  
 - **Precision:** 90%  
